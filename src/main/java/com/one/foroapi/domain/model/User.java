@@ -1,6 +1,7 @@
 package com.one.foroapi.domain.model;
 
 import com.one.foroapi.domain.dto.user.CreateUserDTO;
+import com.one.foroapi.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,8 @@ public class User {
     private String last_name;
     private String password;
     private String email;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private Boolean enabled;
 
     public User(CreateUserDTO createUserDTO) {
@@ -30,7 +32,7 @@ public class User {
         this.username = createUserDTO.username();
         this.email = createUserDTO.email();
         this.password = createUserDTO.password();
-        this.role = createUserDTO.role();
+        this.role = Role.USER;
         this.enabled = true;
     }
 }

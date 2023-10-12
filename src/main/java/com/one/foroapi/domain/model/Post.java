@@ -1,12 +1,11 @@
 package com.one.foroapi.domain.model;
 
+import com.one.foroapi.domain.dto.post.CreatePostDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "posts")
@@ -20,7 +19,25 @@ public class Post {
     private String title;
     private String content;
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user_id;
     @ManyToOne
+    @JoinColumn(name = "topic_id")
     private Topic topic_id;
+
+    public Post(CreatePostDTO createPostDTO) {
+        this.title = createPostDTO.title();
+        this.content = createPostDTO.content();
+
+        if (createPostDTO.userId() != null) {
+            User user = new User();
+            user.setId(createPostDTO.userId());
+            this.user_id = user;
+        }
+        if (createPostDTO.topicId() != null) {
+            Topic topic = new Topic();
+            topic.setId(createPostDTO.topicId());
+            this.topic_id = topic;
+        }
+    }
 }

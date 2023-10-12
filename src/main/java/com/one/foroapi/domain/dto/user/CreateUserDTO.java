@@ -8,6 +8,5 @@ public record CreateUserDTO(
         @NotBlank String username,
         @NotBlank String lastName,
         @NotBlank @Email String email,
-        @NotBlank String password,
-        @NotBlank String role) {
+        @NotBlank String password) {
 }

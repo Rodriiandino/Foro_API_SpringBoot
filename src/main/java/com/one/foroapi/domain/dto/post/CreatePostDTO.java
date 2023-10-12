@@ -1,12 +1,12 @@
-package com.one.foroapi.domain.dto.topic;
+package com.one.foroapi.domain.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CreateTopicDTO(
+public record CreatePostDTO(
         @NotBlank String title,
-        @NotBlank String description,
+        @NotBlank String content,
         @NotNull Long userId,
-        @NotNull Long categoryId
+        @NotNull Long topicId
 ) {
 }

@@ -1,5 +1,7 @@
 package com.one.foroapi.domain.service;
 
+import com.one.foroapi.domain.dto.category.CreateCategoryDTO;
+import com.one.foroapi.domain.model.Category;
 import com.one.foroapi.domain.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,5 +12,10 @@ public class CategoryService {
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
+    }
+
+    public Category createCategory(CreateCategoryDTO createCategoryDTO) {
+        Category category = new Category(createCategoryDTO);
+        return categoryRepository.save(category);
     }
 }
