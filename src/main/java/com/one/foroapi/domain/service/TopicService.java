@@ -8,6 +8,8 @@ import com.one.foroapi.domain.repository.CategoryRepository;
 import com.one.foroapi.domain.repository.TopicRepository;
 import com.one.foroapi.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,15 +35,23 @@ public class TopicService {
 
         if (createTopicDTO.userId() != null) {
             User user = userRepository.findById(createTopicDTO.userId()).orElse(null);
-            topic.setUser_id(user);
+            topic.setUser(user);
         }
 
         if (createTopicDTO.categoryId() != null) {
             Category category = categoryRepository.findById(createTopicDTO.categoryId()).orElse(null);
-            topic.setCategory_id(category);
+            topic.setCategory(category);
         }
 
         return topicRepository.save(topic);
+    }
+
+    public Page<Topic> getAllTopics(Pageable pagination) {
+        return topicRepository.findAll(pagination);
+    }
+
+    public Topic getTopicById(Long topicId) {
+        return topicRepository.findById(topicId).orElse(null);
     }
 }
 

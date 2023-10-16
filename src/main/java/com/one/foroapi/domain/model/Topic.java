@@ -20,10 +20,10 @@ public class Topic {
     private String description;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user_id;
+    private User user;
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category category_id;
+    private Category category;
 
     public Topic(CreateTopicDTO createTopicDTO) {
         this.title = createTopicDTO.title();
@@ -32,13 +32,13 @@ public class Topic {
         if (createTopicDTO.userId() != null) {
             User user = new User();
             user.setId(createTopicDTO.userId());
-            this.user_id = user;
+            this.user = user;
         }
 
         if (createTopicDTO.categoryId() != null) {
             Category category = new Category();
             category.setId(createTopicDTO.categoryId());
-            this.category_id = category;
+            this.category = category;
         }
     }
 

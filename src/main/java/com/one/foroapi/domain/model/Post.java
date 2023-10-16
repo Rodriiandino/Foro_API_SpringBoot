@@ -20,10 +20,10 @@ public class Post {
     private String content;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user_id;
+    private User user;
     @ManyToOne
     @JoinColumn(name = "topic_id")
-    private Topic topic_id;
+    private Topic topic;
 
     public Post(CreatePostDTO createPostDTO) {
         this.title = createPostDTO.title();
@@ -32,12 +32,12 @@ public class Post {
         if (createPostDTO.userId() != null) {
             User user = new User();
             user.setId(createPostDTO.userId());
-            this.user_id = user;
+            this.user = user;
         }
         if (createPostDTO.topicId() != null) {
             Topic topic = new Topic();
             topic.setId(createPostDTO.topicId());
-            this.topic_id = topic;
+            this.topic = topic;
         }
     }
 }

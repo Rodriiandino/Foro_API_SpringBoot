@@ -1,12 +1,11 @@
 package com.one.foroapi.domain.model;
 
+import com.one.foroapi.domain.dto.comment.CreateCommentDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
@@ -19,7 +18,26 @@ public class Comment {
     private Long id;
     private String content;
     @ManyToOne
-    private User user_id;
+    @JoinColumn(name = "user_id")
+    private User user;
     @ManyToOne
-    private Post post_id;
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+
+    public Comment(CreateCommentDTO createCommentDTO) {
+        this.content = createCommentDTO.content();
+
+        if (createCommentDTO.userId() != null) {
+            User user = new User();
+            user.setId(createCommentDTO.userId());
+            this.user = user;
+        }
+
+        if (createCommentDTO.postId() != null) {
+            Post post = new Post();
+            post.setId(createCommentDTO.postId());
+            this.post = post;
+        }
+    }
 }
