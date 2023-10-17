@@ -24,4 +24,12 @@ public class CategoryService {
     public Page<Category> getAllCategories(Pageable pagination) {
         return categoryRepository.findAll(pagination);
     }
+
+    public Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId).orElse(null);
+    }
+
+    public void deleteCategoryById(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+    }
 }

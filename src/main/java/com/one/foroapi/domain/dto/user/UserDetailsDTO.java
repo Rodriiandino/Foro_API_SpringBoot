@@ -3,6 +3,8 @@ package com.one.foroapi.domain.dto.user;
 import com.one.foroapi.domain.model.User;
 import com.one.foroapi.util.Role;
 
+import java.time.LocalDateTime;
+
 public record UserDetailsDTO(
         Long id,
         String firstName,
@@ -10,7 +12,8 @@ public record UserDetailsDTO(
         String lastName,
         String email,
         Role role,
-        Boolean enabled
+        Boolean enabled,
+        LocalDateTime createdAt
 ) {
     public UserDetailsDTO(User user) {
         this(
@@ -20,6 +23,7 @@ public record UserDetailsDTO(
                 user.getLast_name(),
                 user.getEmail(),
                 user.getRole(),
-                user.getEnabled());
+                user.getEnabled(),
+                user.getCreated_at());
     }
 }

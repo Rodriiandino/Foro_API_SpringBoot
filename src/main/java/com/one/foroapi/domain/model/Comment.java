@@ -4,6 +4,8 @@ import com.one.foroapi.domain.dto.comment.CreateCommentDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,6 +19,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
+    private LocalDateTime created_at;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -27,6 +30,7 @@ public class Comment {
 
     public Comment(CreateCommentDTO createCommentDTO) {
         this.content = createCommentDTO.content();
+        this.created_at = LocalDateTime.now();
 
         if (createCommentDTO.userId() != null) {
             User user = new User();

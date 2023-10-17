@@ -53,5 +53,10 @@ public class TopicService {
     public Topic getTopicById(Long topicId) {
         return topicRepository.findById(topicId).orElse(null);
     }
+
+    public void deleteLogicalTopicById(Long topicId) {
+        Topic topic = getTopicById(topicId);
+        topic.deleteLogical();
+    }
 }
 

@@ -51,4 +51,8 @@ public class CommentService {
         return commentRepository.findById(commentId).orElse(null);
     }
 
+    public void deleteCommentById(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
 }

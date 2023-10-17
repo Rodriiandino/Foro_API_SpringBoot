@@ -1,8 +1,11 @@
 package com.one.foroapi.domain.model;
 
 import com.one.foroapi.domain.dto.topic.CreateTopicDTO;
+import com.one.foroapi.util.Status;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,6 +21,11 @@ public class Topic {
     private Long id;
     private String title;
     private String description;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
+    private LocalDateTime deleted_at;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -25,9 +33,14 @@ public class Topic {
     @JoinColumn(name = "category_id")
     private Category category;
 
+
     public Topic(CreateTopicDTO createTopicDTO) {
         this.title = createTopicDTO.title();
         this.description = createTopicDTO.description();
+        this.status = Status.OPEN;
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
+        this.deleted_at = null;
 
         if (createTopicDTO.userId() != null) {
             User user = new User();
@@ -42,4 +55,8 @@ public class Topic {
         }
     }
 
+    public void deleteLogical() {
+        this.status = Status.DELETED;
+        this.deleted_at = LocalDateTime.now();
+    }
 }

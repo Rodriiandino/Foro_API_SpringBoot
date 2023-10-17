@@ -36,4 +36,17 @@ public class CategoryController {
         Page<Category> categories = categoryService.getAllCategories(pagination);
         return ResponseEntity.ok(categories);
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId) {
+        Category category = categoryService.getCategoryById(categoryId);
+        return ResponseEntity.ok(category);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @Transactional
+    public ResponseEntity<?> deleteCategoryById(@PathVariable Long categoryId) {
+        categoryService.deleteCategoryById(categoryId);
+        return ResponseEntity.noContent().build();
+    }
 }

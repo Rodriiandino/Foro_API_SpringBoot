@@ -4,6 +4,8 @@ import com.one.foroapi.domain.dto.post.CreatePostDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,10 +26,12 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "topic_id")
     private Topic topic;
+    private LocalDateTime created_at;
 
     public Post(CreatePostDTO createPostDTO) {
         this.title = createPostDTO.title();
         this.content = createPostDTO.content();
+        this.created_at = LocalDateTime.now();
 
         if (createPostDTO.userId() != null) {
             User user = new User();
