@@ -2,6 +2,7 @@ package com.one.foroapi.controller;
 
 import com.one.foroapi.domain.dto.comment.CommentDetailsDTO;
 import com.one.foroapi.domain.dto.comment.CreateCommentDTO;
+import com.one.foroapi.domain.dto.comment.UpdateCommentDTO;
 import com.one.foroapi.domain.model.Comment;
 import com.one.foroapi.domain.service.CommentService;
 import jakarta.validation.Valid;
@@ -41,6 +42,14 @@ public class CommentController {
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentDetailsDTO> getCommentById(@PathVariable Long commentId) {
         Comment comment = commentService.getCommentById(commentId);
+        CommentDetailsDTO commentDetailsDTO = new CommentDetailsDTO(comment);
+        return ResponseEntity.ok(commentDetailsDTO);
+    }
+
+    @PutMapping("/{commentId}")
+    @Transactional
+    public ResponseEntity<CommentDetailsDTO> updateComment(@PathVariable Long commentId, @RequestBody @Valid UpdateCommentDTO updateCommentDTO) {
+        Comment comment = commentService.updateComment(commentId, updateCommentDTO);
         CommentDetailsDTO commentDetailsDTO = new CommentDetailsDTO(comment);
         return ResponseEntity.ok(commentDetailsDTO);
     }

@@ -1,12 +1,14 @@
 package com.one.foroapi.domain.service;
 
 import com.one.foroapi.domain.dto.post.CreatePostDTO;
+import com.one.foroapi.domain.dto.post.UpdatePostDTO;
 import com.one.foroapi.domain.model.Post;
 import com.one.foroapi.domain.model.Topic;
 import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.PostRepository;
 import com.one.foroapi.domain.repository.TopicRepository;
 import com.one.foroapi.domain.repository.UserRepository;
+import com.one.foroapi.util.TimeLimit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,5 +59,23 @@ public class PostService {
 
     public void deletePostById(Long postId) {
         postRepository.deleteById(postId);
+    }
+
+    public Post updatePost(Long postId, UpdatePostDTO updatePost) {
+        Post post = getPostById(postId);
+
+        if (!TimeLimit.isEditableWithinTimeLimit(post.getCreated_at())) {
+            throw new RuntimeException("The topic is not editable after 15 minutes of its creation dat time");
+        }
+
+        if (updatePost.title() != null) {
+            post.setTitle(updatePost.title());
+        }
+
+        if (updatePost.content() != null) {
+            post.setContent(updatePost.content());
+        }
+
+        return postRepository.save(post);
     }
 }

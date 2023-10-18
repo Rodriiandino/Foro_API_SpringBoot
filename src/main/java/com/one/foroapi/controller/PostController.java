@@ -2,6 +2,7 @@ package com.one.foroapi.controller;
 
 import com.one.foroapi.domain.dto.post.CreatePostDTO;
 import com.one.foroapi.domain.dto.post.PostDetailsDTO;
+import com.one.foroapi.domain.dto.post.UpdatePostDTO;
 import com.one.foroapi.domain.model.Post;
 import com.one.foroapi.domain.service.PostService;
 import jakarta.validation.Valid;
@@ -41,6 +42,14 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailsDTO> getPostById(@PathVariable Long postId) {
         Post post = postService.getPostById(postId);
+        PostDetailsDTO postDetailsDTO = new PostDetailsDTO(post);
+        return ResponseEntity.ok(postDetailsDTO);
+    }
+
+    @PutMapping("/{postId}")
+    @Transactional
+    public ResponseEntity<PostDetailsDTO> updatePostById(@PathVariable Long postId, @RequestBody @Valid UpdatePostDTO updatePost) {
+        Post post = postService.updatePost(postId, updatePost);
         PostDetailsDTO postDetailsDTO = new PostDetailsDTO(post);
         return ResponseEntity.ok(postDetailsDTO);
     }

@@ -2,6 +2,7 @@ package com.one.foroapi.controller;
 
 import com.one.foroapi.domain.dto.topic.CreateTopicDTO;
 import com.one.foroapi.domain.dto.topic.TopicDetailsDTO;
+import com.one.foroapi.domain.dto.topic.UpdateTopicDTO;
 import com.one.foroapi.domain.model.Topic;
 import com.one.foroapi.domain.service.TopicService;
 import jakarta.validation.Valid;
@@ -42,6 +43,14 @@ public class TopicController {
     @GetMapping("/{topicId}")
     public ResponseEntity<TopicDetailsDTO> getTopicById(@PathVariable Long topicId) {
         Topic topic = topicService.getTopicById(topicId);
+        TopicDetailsDTO topicDetailsDTO = new TopicDetailsDTO(topic);
+        return ResponseEntity.ok(topicDetailsDTO);
+    }
+
+    @PutMapping("/{topicId}")
+    @Transactional
+    public ResponseEntity<TopicDetailsDTO> updateTopic(@PathVariable Long topicId,@RequestBody @Valid UpdateTopicDTO updateTopicDTO) {
+        Topic topic = topicService.updateTopic(topicId, updateTopicDTO);
         TopicDetailsDTO topicDetailsDTO = new TopicDetailsDTO(topic);
         return ResponseEntity.ok(topicDetailsDTO);
     }
