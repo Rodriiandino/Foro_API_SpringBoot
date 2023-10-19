@@ -1,6 +1,8 @@
 package com.one.foroapi.controller;
 
 import com.one.foroapi.domain.dto.user.CreateUserDTO;
+import com.one.foroapi.domain.dto.user.UpdateUserDTO;
+import com.one.foroapi.domain.dto.user.UpdateUserForAdminDTO;
 import com.one.foroapi.domain.dto.user.UserDetailsDTO;
 import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.service.UserService;
@@ -46,11 +48,29 @@ public class UserController {
         return ResponseEntity.ok(userDetailsDTO);
     }
 
+
+    @PutMapping("/{userId}")
+    @Transactional
+    public ResponseEntity<UserDetailsDTO> updateUserById(@PathVariable Long userId, @RequestBody @Valid UpdateUserDTO updateUserDTO) {
+        User user = userService.updateUserById(userId, updateUserDTO);
+        UserDetailsDTO userDetailsDTO = new UserDetailsDTO(user);
+        return ResponseEntity.ok(userDetailsDTO);
+    }
+
+    @PutMapping("/admin/{userId}")
+    @Transactional
+    public ResponseEntity<UserDetailsDTO> updateUserForAdminById(@PathVariable Long userId, @RequestBody @Valid UpdateUserForAdminDTO updateUserForAdminDTO) {
+        User user = userService.updateUserForAdminById(userId, updateUserForAdminDTO);
+        UserDetailsDTO userDetailsDTO = new UserDetailsDTO(user);
+        return ResponseEntity.ok(userDetailsDTO);
+    }
+
     @DeleteMapping("/{userId}")
     @Transactional
     public ResponseEntity<Void> deleteLogicalUserById(@PathVariable Long userId) {
         userService.deleteLogicalUserById(userId);
         return ResponseEntity.noContent().build();
     }
+
 
 }

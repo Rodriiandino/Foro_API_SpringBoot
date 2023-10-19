@@ -1,6 +1,7 @@
 package com.one.foroapi.controller;
 
 import com.one.foroapi.domain.dto.category.CreateCategoryDTO;
+import com.one.foroapi.domain.dto.category.UpdateCategoryDTO;
 import com.one.foroapi.domain.model.Category;
 import com.one.foroapi.domain.service.CategoryService;
 import jakarta.validation.Valid;
@@ -40,6 +41,16 @@ public class CategoryController {
     @GetMapping("/{categoryId}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
+        if (category == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(category);
+    }
+
+    @PutMapping("/{categoryId}")
+    @Transactional
+    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody @Valid UpdateCategoryDTO updateCategoryDTO) {
+        Category category = categoryService.updateCategory(categoryId, updateCategoryDTO);
         return ResponseEntity.ok(category);
     }
 
