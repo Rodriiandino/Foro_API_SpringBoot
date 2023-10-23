@@ -6,6 +6,7 @@ import com.one.foroapi.domain.dto.user.UpdateUserForAdminDTO;
 import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.UserRepository;
 import com.one.foroapi.util.Role;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +34,19 @@ public class UserService {
     }
 
     public User getUserById(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found: " + userId);
+        }
         return userRepository.findById(userId).orElse(null);
     }
 
     public void deleteLogicalUserById(Long userId) {
         User user = getUserById(userId);
-        user.deleteLogical();
+        if (user != null)
+            user.deleteLogical();
+        else {
+            throw new EntityNotFoundException("User not found: " + userId);
+        }
     }
 
     public User updateUserById(Long userId, UpdateUserDTO updateUserDTO) {
@@ -69,13 +77,17 @@ public class UserService {
 
     public User updateUserForAdminById(Long userId, UpdateUserForAdminDTO updateUserForAdminDTO) {
         User user = getUserById(userId);
-        if (updateUserForAdminDTO.role() != null) {
-            user.setRole(updateUserForAdminDTO.role());
-        }
+        if (user != null) {
+            if (updateUserForAdminDTO.role() != null) {
+                user.setRole(updateUserForAdminDTO.role());
+            }
 
-        if (updateUserForAdminDTO.enabled() != null) {
-            user.setEnabled(updateUserForAdminDTO.enabled());
+            if (updateUserForAdminDTO.enabled() != null) {
+                user.setEnabled(updateUserForAdminDTO.enabled());
+            }
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User not found: " + userId);
         }
-        return userRepository.save(user);
     }
 }

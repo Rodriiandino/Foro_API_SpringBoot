@@ -4,10 +4,9 @@ import com.one.foroapi.domain.dto.category.CreateCategoryDTO;
 import com.one.foroapi.domain.dto.category.UpdateCategoryDTO;
 import com.one.foroapi.domain.model.Category;
 import com.one.foroapi.domain.repository.CategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,24 +28,31 @@ public class CategoryService {
     }
 
     public Category getCategoryById(Long categoryId) {
-        if (categoryRepository.findById(categoryId).isPresent()) {
-            return categoryRepository.findById(categoryId).get();
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new EntityNotFoundException("Category not found: " + categoryId);
         }
-        return null;
+        return categoryRepository.findById(categoryId).orElse(null);
     }
 
     public void deleteCategoryById(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new EntityNotFoundException("Category not found: " + categoryId);
+        }
         categoryRepository.deleteById(categoryId);
     }
 
     public Category updateCategory(Long categoryId, UpdateCategoryDTO updateCategoryDTO) {
         Category category = getCategoryById(categoryId);
-        if (updateCategoryDTO.name() != null) {
-            category.setName(updateCategoryDTO.name());
+        if (category != null) {
+            if (updateCategoryDTO.name() != null) {
+                category.setName(updateCategoryDTO.name());
+            }
+            if (updateCategoryDTO.description() != null) {
+                category.setDescription(updateCategoryDTO.description());
+            }
+            return categoryRepository.save(category);
+        } else {
+            throw new EntityNotFoundException("Category not found: " + categoryId);
         }
-        if (updateCategoryDTO.description() != null) {
-            category.setDescription(updateCategoryDTO.description());
-        }
-        return categoryRepository.save(category);
     }
 }

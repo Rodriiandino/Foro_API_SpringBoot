@@ -8,7 +8,9 @@ import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.CategoryRepository;
 import com.one.foroapi.domain.repository.TopicRepository;
 import com.one.foroapi.domain.repository.UserRepository;
+import com.one.foroapi.infra.exceptions.notEditableException;
 import com.one.foroapi.util.TimeLimit;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,35 +56,46 @@ public class TopicService {
     }
 
     public Topic getTopicById(Long topicId) {
+        if (!topicRepository.existsById(topicId)) {
+            throw new EntityNotFoundException("Topic not found: " + topicId);
+        }
         return topicRepository.findById(topicId).orElse(null);
     }
 
     public void deleteLogicalTopicById(Long topicId) {
         Topic topic = getTopicById(topicId);
-        topic.deleteLogical();
+        if (topic != null)
+            topic.deleteLogical();
+        else {
+            throw new EntityNotFoundException("Topic not found: " + topicId);
+        }
     }
 
     public Topic updateTopic(Long id ,UpdateTopicDTO updateTopicDTO) {
         Topic topic = getTopicById(id);
 
-        if (!TimeLimit.isEditableWithinTimeLimit(topic.getCreated_at())) {
-            throw new RuntimeException("The topic is not editable after 15 minutes of its creation dat time");
-        }
+        if (topic != null) {
+            if (!TimeLimit.isEditableWithinTimeLimit(topic.getCreated_at())) {
+                throw new notEditableException("The topic is not editable after 15 minutes of its creation dat time");
+            }
 
-        if (updateTopicDTO.title() != null) {
-            topic.setTitle(updateTopicDTO.title());
-        }
+            if (updateTopicDTO.title() != null) {
+                topic.setTitle(updateTopicDTO.title());
+            }
 
-        if (updateTopicDTO.description() != null) {
-            topic.setDescription(updateTopicDTO.description());
-        }
+            if (updateTopicDTO.description() != null) {
+                topic.setDescription(updateTopicDTO.description());
+            }
 
-        if (updateTopicDTO.categoryId() != null) {
-            Category category = categoryRepository.findById(updateTopicDTO.categoryId()).orElse(null);
-            topic.setCategory(category);
-        }
+            if (updateTopicDTO.categoryId() != null) {
+                Category category = categoryRepository.findById(updateTopicDTO.categoryId()).orElse(null);
+                topic.setCategory(category);
+            }
 
-        return topicRepository.save(topic);
+            return topicRepository.save(topic);
+        } else {
+            throw new EntityNotFoundException("Topic not found: " + id);
+        }
     }
 }
 

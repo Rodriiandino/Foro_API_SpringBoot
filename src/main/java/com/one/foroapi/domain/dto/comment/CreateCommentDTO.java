@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateCommentDTO(
-        @NotBlank String content,
-        @NotNull Long userId,
-        @NotNull Long postId
+        @NotBlank(message = "The content field is required") String content,
+        @NotNull(message = "The userId field is required") Long userId,
+        @NotNull(message = "The postId field is required") Long postId
 ) {
 }

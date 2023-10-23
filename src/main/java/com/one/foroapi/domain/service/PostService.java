@@ -8,7 +8,9 @@ import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.PostRepository;
 import com.one.foroapi.domain.repository.TopicRepository;
 import com.one.foroapi.domain.repository.UserRepository;
+import com.one.foroapi.infra.exceptions.notEditableException;
 import com.one.foroapi.util.TimeLimit;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,28 +56,38 @@ public class PostService {
     }
 
     public Post getPostById(Long postId) {
+        if (!postRepository.existsById(postId)) {
+            throw new EntityNotFoundException("Post not found: " + postId);
+        }
         return postRepository.findById(postId).orElse(null);
     }
 
     public void deletePostById(Long postId) {
+        if (!postRepository.existsById(postId)) {
+            throw new EntityNotFoundException("Post not found: " + postId);
+        }
         postRepository.deleteById(postId);
     }
 
     public Post updatePost(Long postId, UpdatePostDTO updatePost) {
         Post post = getPostById(postId);
 
-        if (!TimeLimit.isEditableWithinTimeLimit(post.getCreated_at())) {
-            throw new RuntimeException("The topic is not editable after 15 minutes of its creation dat time");
-        }
+        if (post != null) {
+            if (!TimeLimit.isEditableWithinTimeLimit(post.getCreated_at())) {
+                throw new notEditableException("The post is not editable after 15 minutes of its creation dat time");
+            }
 
-        if (updatePost.title() != null) {
-            post.setTitle(updatePost.title());
-        }
+            if (updatePost.title() != null) {
+                post.setTitle(updatePost.title());
+            }
 
-        if (updatePost.content() != null) {
-            post.setContent(updatePost.content());
-        }
+            if (updatePost.content() != null) {
+                post.setContent(updatePost.content());
+            }
 
-        return postRepository.save(post);
+            return postRepository.save(post);
+        } else {
+            throw new EntityNotFoundException("Post not found: " + postId);
+        }
     }
 }
