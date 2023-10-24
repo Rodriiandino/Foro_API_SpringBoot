@@ -52,27 +52,32 @@ public class UserService {
     public User updateUserById(Long userId, UpdateUserDTO updateUserDTO) {
         User user = getUserById(userId);
 
-        if (updateUserDTO.firstName() != null) {
-            user.setFirst_name(updateUserDTO.firstName());
-        }
+        if (user != null) {
 
-        if (updateUserDTO.lastName() != null) {
-            user.setLast_name(updateUserDTO.lastName());
-        }
+            if (updateUserDTO.firstName() != null) {
+                user.setFirst_name(updateUserDTO.firstName());
+            }
 
-        if (updateUserDTO.username() != null) {
-            user.setUsername(updateUserDTO.username());
-        }
+            if (updateUserDTO.lastName() != null) {
+                user.setLast_name(updateUserDTO.lastName());
+            }
 
-        if (updateUserDTO.email() != null) {
-            user.setEmail(updateUserDTO.email());
-        }
+            if (updateUserDTO.username() != null) {
+                user.setUsername(updateUserDTO.username());
+            }
 
-        if (updateUserDTO.password() != null) {
-            user.setPassword(updateUserDTO.password());
-        }
+            if (updateUserDTO.email() != null) {
+                user.setEmail(updateUserDTO.email());
+            }
 
-        return userRepository.save(user);
+            if (updateUserDTO.password() != null) {
+                user.setPassword(updateUserDTO.password());
+            }
+
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User not found: " + userId);
+        }
     }
 
     public User updateUserForAdminById(Long userId, UpdateUserForAdminDTO updateUserForAdminDTO) {
