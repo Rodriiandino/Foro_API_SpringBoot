@@ -53,10 +53,11 @@ public class AuthenticationController {
         Authentication authToken = new UsernamePasswordAuthenticationToken(userAuthentication.username(),
                 userAuthentication.password());
 
-        var authenticationUser = authenticationManager.authenticate(authToken);
-        var JWTtoken = tokenService.generateToken((User) authenticationUser.getPrincipal());
+        Authentication authentication = authenticationManager.authenticate(authToken);
 
-        return ResponseEntity.ok(new JWTtoken(JWTtoken));
+        String token = tokenService.generateToken((User) authentication.getPrincipal());
+
+        return ResponseEntity.ok(new JWTtoken(token));
     }
 
 }
