@@ -5,7 +5,8 @@ import com.one.foroapi.domain.dto.user.UpdateUserDTO;
 import com.one.foroapi.domain.dto.user.UpdateUserForAdminDTO;
 import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.UserRepository;
-import com.one.foroapi.util.Role;
+import com.one.foroapi.domain.service.validations.user.CreateUserValidator;
+import com.one.foroapi.domain.service.validations.user.UpdateUserValidator;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,13 +22,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final List<CreateUserValidator> validatorsCreate;
+
+    private final List<UpdateUserValidator> validatorsUpdate;
+
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, List<CreateUserValidator> validatorsCreate, List<UpdateUserValidator> validatorsUpdate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.validatorsCreate = validatorsCreate;
+        this.validatorsUpdate = validatorsUpdate;
     }
 
     public User createUser(CreateUserDTO createUserDTO) {
+        for (CreateUserValidator validator : validatorsCreate) {
+            validator.validate(createUserDTO);
+        }
         User newUser = new User(createUserDTO);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         return userRepository.save(newUser);
@@ -54,6 +64,11 @@ public class UserService {
     }
 
     public User updateUserById(Long userId, UpdateUserDTO updateUserDTO) {
+
+        for (UpdateUserValidator validator : validatorsUpdate) {
+            validator.validate(updateUserDTO);
+        }
+
         User user = getUserById(userId);
 
         if (user != null) {

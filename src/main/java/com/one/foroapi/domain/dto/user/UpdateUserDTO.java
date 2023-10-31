@@ -1,10 +1,12 @@
 package com.one.foroapi.domain.dto.user;
 
+import jakarta.validation.constraints.Email;
+
 public record UpdateUserDTO(
         String firstName,
         String lastName,
         String username,
-        String email,
+        @Email(message = "Invalid email address") String email,
         String password
-) {
+) implements UserDTO {
 }

@@ -30,4 +30,12 @@ public class ExceptionHandlerController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
 
+        @ExceptionHandler(Validations.class)
+        public ResponseEntity<CustomErrorResponse> handleValidations(Validations ex) {
+            CustomErrorResponse error = new CustomErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+
+
+
 }

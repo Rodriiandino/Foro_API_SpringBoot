@@ -40,8 +40,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } else {
-            throw new AccessDeniedException("Access denied");
         }
         filterChain.doFilter(request, response);
     }
