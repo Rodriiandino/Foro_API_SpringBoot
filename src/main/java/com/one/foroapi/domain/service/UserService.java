@@ -7,6 +7,7 @@ import com.one.foroapi.domain.model.User;
 import com.one.foroapi.domain.repository.UserRepository;
 import com.one.foroapi.domain.service.validations.user.CreateUserValidator;
 import com.one.foroapi.domain.service.validations.user.UpdateUserValidator;
+import com.one.foroapi.domain.service.validations.user.UpdateUserValidatorForAdmin;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,12 +27,15 @@ public class UserService {
 
     private final List<UpdateUserValidator> validatorsUpdate;
 
+    private final List<UpdateUserValidatorForAdmin> validatorsUpdateForAdmin;
+
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, List<CreateUserValidator> validatorsCreate, List<UpdateUserValidator> validatorsUpdate) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, List<CreateUserValidator> validatorsCreate, List<UpdateUserValidator> validatorsUpdate, List<UpdateUserValidatorForAdmin> validatorsUpdateForAdmin) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.validatorsCreate = validatorsCreate;
         this.validatorsUpdate = validatorsUpdate;
+        this.validatorsUpdateForAdmin = validatorsUpdateForAdmin;
     }
 
     public User createUser(CreateUserDTO createUserDTO) {
@@ -100,6 +104,11 @@ public class UserService {
     }
 
     public User updateUserForAdminById(Long userId, UpdateUserForAdminDTO updateUserForAdminDTO) {
+
+        for (UpdateUserValidatorForAdmin validator : validatorsUpdateForAdmin) {
+            validator.validate(updateUserForAdminDTO);
+        }
+
         User user = getUserById(userId);
         if (user != null) {
             if (updateUserForAdminDTO.role() != null) {
