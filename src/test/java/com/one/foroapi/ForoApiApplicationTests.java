@@ -136,4 +136,25 @@ class ForoApiApplicationTests {
 		System.out.println(responseContent);
 	}
 
+	@Test
+	@WithMockUser(username = "test", password = "password123")
+	public void createComment() throws Exception {
+		String json = """
+		{
+			"content": "test",
+			"userId": 1,
+			"postId": 1
+		}
+		""";
+		MvcResult result = mockMvc.perform(post("/api/comments/create")
+						.content(json)
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		String responseContent = result.getResponse().getContentAsString();
+
+		System.out.println(responseContent);
+	}
+
 }

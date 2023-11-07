@@ -23,7 +23,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret);
             return JWT.create()
-                    .withIssuer("abc")
+                    .withIssuer("Auth0")
                     .withSubject(user.getUsername())
                     .withClaim("id", user.getId())
                     .withExpiresAt(generateExpiringDate())
@@ -43,7 +43,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(apiSecret);
             verifier = JWT.require(algorithm)
-                    .withIssuer("abc")
+                    .withIssuer("Auth0")
                     .build()
                     .verify(token);
             verifier.getSubject();
@@ -54,13 +54,13 @@ public class TokenService {
         assert verifier != null;
 
         if (verifier.getSubject() == null) {
-            throw new RuntimeException("Invalid verifier");
+            throw new RuntimeException("Token is invalid");
         }
         return verifier.getSubject();
     }
 
     private Instant generateExpiringDate() {
-        return LocalDateTime.now().plusHours(6).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.UTC);
     }
 
 }
